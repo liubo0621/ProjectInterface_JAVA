@@ -38,6 +38,7 @@ public class Project implements Runnable{
 	private int processPid;
 	private int threadNum;
 	private int allowedMaxThreadNum;
+	private int taskDoneNum;
 	
 	private Project(){
 		tools =  Tools.getTools();
@@ -47,6 +48,7 @@ public class Project implements Runnable{
 		readCommandTime = Integer.parseInt(tools.getProperty("project.read_file_time")) * 1000;
 		processPid = tools.getPid();
 		threadNum = 0;
+		taskDoneNum = 0;
 		allowedMaxThreadNum =0xfffffff;
 		
 		new Thread(this).start();
@@ -108,8 +110,26 @@ public class Project implements Runnable{
 		String taskName = null;
 		int taskLength = 0;
 		TaskStatus taskStatus = TaskStatus.OTHER;
-		int taskDoneNum = 0;
+		int taskDoneNum = this.taskDoneNum;
 		write(isException, taskId, taskName, taskLength, taskStatus, taskDoneNum, exceptionMsg);
+	}
+	
+	/**
+	 * @Method: writeTaskMsg 
+	 * @Description: 写任务信息
+	 * @param taskId 任务id
+	 * @param taskName 任务名
+	 * @param taskLength 任务时长 单位分钟
+	 * @param taskStatus 任务状态 TaskStatus.DONE || TaskStatus.DOING || TaskStatus.EXCEPTION 
+	 * @param taskDoneNum 已做完任务数
+	 * @param exceptionMsg 异常信息
+	 * void
+	 */
+	public void writeTaskMsg(int taskId, String taskName, int taskLength, TaskStatus taskStatus, int taskDoneNum){
+		boolean isException = false;
+		this.taskDoneNum = taskDoneNum;
+		
+		write(isException, taskId, taskName, taskLength, taskStatus, taskDoneNum, null);
 	}
 	
 	/**
@@ -124,8 +144,9 @@ public class Project implements Runnable{
 	 * void
 	 */
 	public void writeTaskMsg(int taskId, String taskName, int taskLength, TaskStatus taskStatus, int taskDoneNum, Exception e){
-		boolean isException = false;
 		String exceptionMsg = e == null ? null : e.toString();
+		boolean isException = false;
+		this.taskDoneNum = taskDoneNum;
 		
 		write(isException, taskId, taskName, taskLength, taskStatus, taskDoneNum, exceptionMsg);
 	}
@@ -135,7 +156,7 @@ public class Project implements Runnable{
 		String time = tools.getCurrentTime();
 		long threadId = tools.getThreadId();
 		
-		String msg = String.format("<process_id =%d,write_file_time=%s,process_name=%s,exception=%b,thread_id=%d,thread_num=%d,task_id=%d,task_name=%s,task_length=%d,task_status=%d,task_done_num=%d,exception_msg=%s/>",
+		String msg = String.format("<process_id=%d,write_file_time=%s,process_name=%s,exception=%b,thread_id=%d,thread_num=%d,task_id=%d,task_name=%s,task_length=%d,task_status=%d,task_done_num=%d,exception_msg=%s/>",
 							processPid, time, projectNamme, isException, threadId, threadNum, taskId, taskName, taskLength, taskStatus.value, taskDoneNum, exceptionMsg);
 		
 		System.out.println(msg);

@@ -1,6 +1,7 @@
 package com.test;
 
 import com.project.Project;
+import com.project.Project.TaskStatus;
 
 
 /**
@@ -10,7 +11,6 @@ import com.project.Project;
  */
 public class Test {
 	public static void main(String[] args) {
-		Project.getInstance().exception("testException");
-		
+		Project.getInstance().writeTaskMsg(1, "test", 12, TaskStatus.DOING, 20);
 	}
 }
