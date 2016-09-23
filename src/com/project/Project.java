@@ -40,6 +40,8 @@ public class Project implements Runnable{
 	private int allowedMaxThreadNum;
 	private int taskDoneNum;
 	
+	private boolean isDebug;
+	
 	private Project(){
 		tools =  Tools.getTools();
 		projectNamme = tools.getProperty("project_name");
@@ -50,6 +52,7 @@ public class Project implements Runnable{
 		threadNum = 0;
 		taskDoneNum = 0;
 		allowedMaxThreadNum =0xfffffff;
+		isDebug = false;
 		
 		new Thread(this).start();
 	}
@@ -64,13 +67,18 @@ public class Project implements Runnable{
 	}
 	
 	//method
+	public void isDebug(boolean isDebug){
+		this.isDebug = isDebug;
+	}
+	
+	
 	/**
 	 * @Method: threadStarted 
 	 * @Description:线程开启时调用 用于统计线程数
 	 * boolean  返回true 则可开启线程  false不可开启线程
 	 */
 	public synchronized boolean threadStarted(){
-		if (threadNum <= allowedMaxThreadNum) {
+		if (threadNum <= allowedMaxThreadNum || allowedMaxThreadNum <= 0) {
 			threadNum++;
 			return true;
 		}
@@ -158,8 +166,10 @@ public class Project implements Runnable{
 		
 		String msg = String.format("<process_id=%d,write_file_time=%s,process_name=%s,exception=%b,thread_id=%d,thread_num=%d,task_id=%d,task_name=%s,task_length=%d,task_status=%d,task_done_num=%d,exception_msg=%s/>",
 							processPid, time, projectNamme, isException, threadId, threadNum, taskId, taskName, taskLength, taskStatus.value, taskDoneNum, exceptionMsg);
-		
-		System.out.println(msg);
+		if (isDebug) {
+			System.out.println("write: " + msg);
+		}
+
 		tools.writeFile(statusFile, msg+ "\r\n");
 	}
 	
@@ -181,6 +191,10 @@ public class Project implements Runnable{
 //	TASK:STOP taskId,threadId
 //	THRead:MAX:NUM threadNum
 	private void dealCommand(String command){
+		if (isDebug) {
+			System.out.println("receive command: " + command);
+		}
+		
 		String commandHead = command.split(" ")[0];
 		String commandContent = command.split(" ")[1];
 		if (commandHead.equals("TASK:STOP")) {

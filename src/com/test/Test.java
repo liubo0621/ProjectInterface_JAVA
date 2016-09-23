@@ -11,6 +11,18 @@ import com.project.Project.TaskStatus;
  */
 public class Test {
 	public static void main(String[] args) {
-		Project.getInstance().writeTaskMsg(1, "test", 12, TaskStatus.DOING, 20);
+		int i = 0;
+		Project.getInstance().isDebug(true);
+		while(i < 10){
+			Project.getInstance().writeTaskMsg(i, "²âÊÔ" + i, 10, TaskStatus.DOING, 20 + i);
+//			try {
+//				Thread.sleep(10000);
+//			} catch (InterruptedException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+			Project.getInstance().writeTaskMsg(i, "²âÊÔ" + i, 10, TaskStatus.DONE, 20 + i);
+			i++;
+		}
 	}
 }
