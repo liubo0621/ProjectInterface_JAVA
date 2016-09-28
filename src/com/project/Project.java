@@ -44,7 +44,7 @@ public class Project implements Runnable{
 	
 	private Project(){
 		tools =  Tools.getTools();
-		projectNamme = tools.getProperty("project_name");
+		projectNamme = tools.getProperty("project.name");
 		statusFile = tools.getProperty("project.status_file");
 		commandFile = tools.getProperty("client.command_file");
 		readCommandTime = Integer.parseInt(tools.getProperty("project.read_file_time")) * 1000;

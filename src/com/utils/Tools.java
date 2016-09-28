@@ -185,7 +185,7 @@ public class Tools {
     			}
 
     			is.close();
-//    			file.delete();
+    			file.delete();
 			}
 		
 		} catch (FileNotFoundException e) {
